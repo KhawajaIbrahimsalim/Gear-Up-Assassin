@@ -7,7 +7,7 @@ public class Gun_Info : ScriptableObject
     public float Damage;
     [Range(0.01f, 5f)]
     public float Fire_rate;
-    [Range(5, 20)]
+    [Range(5, 100), Tooltip("Sets the length of the raycast (This field does not effect grenade launcher)")]
     public float Range;
     public LayerMask Hit_effect_layer;
     public LayerMask Damage_effect_layer;

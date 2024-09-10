@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Damage: 100
   Fire_rate: 4.27
-  Range: 20
+  Range: 5
   Hit_effect_layer:
     serializedVersion: 2
     m_Bits: 64

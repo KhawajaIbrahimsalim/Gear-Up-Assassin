@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Revolver
   m_EditorClassIdentifier: 
   Damage: 41
-  Fire_rate: 1.2
-  Range: 20
+  Fire_rate: 0.35
+  Range: 65
   Hit_effect_layer:
     serializedVersion: 2
     m_Bits: 64
