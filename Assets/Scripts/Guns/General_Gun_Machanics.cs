@@ -43,8 +43,6 @@ public class General_Gun_Machanics : MonoBehaviour
     [SerializeField, Range(0.01f, 0.05f)]
     private float Y_spread_factor;
     [SerializeField]
-    private GameObject Guns;//this will be replaced by a list holding all the guns and will be moved to a handler.
-    [SerializeField]
     private GameObject Gun_recoil_partical_effect;
 
     //Handlers
@@ -55,6 +53,9 @@ public class General_Gun_Machanics : MonoBehaviour
     private Camera cam;
     private float fire_rate_temp;
     private float Scroll_wheel_axis;
+    private Vector3 Guns_originalPosition;
+    private Quaternion Guns_originalRotation;
+
 
     void Start()
     {
@@ -65,6 +66,13 @@ public class General_Gun_Machanics : MonoBehaviour
         Current_gun_info = Revolver_Info;
         fire_rate_temp = Current_gun_info.Fire_rate;
         ui_Handler.Gun_name.text = "Revolver";
+
+        foreach (var item in first_Person_Data.Guns)
+        {
+            item.SetActive(false);
+        }
+        first_Person_Data.Current_selected_gun_obj = first_Person_Data.Guns[(int)G_type];
+        first_Person_Data.Current_selected_gun_obj.SetActive(true);
     }
 
     void Update()
@@ -94,7 +102,7 @@ public class General_Gun_Machanics : MonoBehaviour
                 fire_rate_temp = Current_gun_info.Fire_rate;
                 CameraShakerHandler.Shake(camera_Effect_Handler.Gun_Recoil_shake);
                 Muzzel_flash.SetActive(true);
-                Guns.GetComponent<Animator>().SetTrigger("Play anime");
+                first_Person_Data.Current_selected_gun_obj.GetComponent<Animator>().SetTrigger("Play anime");
 
                 if (G_type == Gun_type.Grenade_launcher)//for grenade launcher
                 {
@@ -165,7 +173,7 @@ public class General_Gun_Machanics : MonoBehaviour
         
         if (Input.GetMouseButtonUp(0))
         {
-            Gun_recoil_partical_effect.SetActive(true);
+            Gun_recoil_partical_effect.GetComponent<ParticleSystem>().Play();
         }
     }
 
@@ -194,22 +202,46 @@ public class General_Gun_Machanics : MonoBehaviour
 
     public void Change_current_Gun()
     {
-        if (Scroll_wheel_axis != 0)
-        {
-            fire_rate_temp = 0;
-            ui_Handler.Text_in(ui_Handler.Gun_name);
-        }
-
         if (Scroll_wheel_axis < 0f && ((int)G_type) < 3)
         {
             G_type++;
             ui_Handler.Gun_name.text = G_type.ToString();
+            ResetWeaponTransform();
+            first_Person_Data.Current_selected_gun_obj.SetActive(false);
+            first_Person_Data.Current_selected_gun_obj = first_Person_Data.Guns[(int)G_type];
         }
         else if (Scroll_wheel_axis > 0f && ((int)G_type) > 0)
         {
             G_type--;
             ui_Handler.Gun_name.text = G_type.ToString();
+            ResetWeaponTransform();
+            first_Person_Data.Current_selected_gun_obj.SetActive(false);
+            first_Person_Data.Current_selected_gun_obj = first_Person_Data.Guns[(int)G_type];
+        }
+
+        if (Scroll_wheel_axis != 0)
+        {
+            fire_rate_temp = 0;
+            ui_Handler.Text_in(ui_Handler.Gun_name);
+            first_Person_Data.Current_selected_gun_obj.SetActive(true);
+
+            // Save new gun's original position and rotation
+            SaveWeaponTransform();
+
+            first_Person_Data.Current_selected_gun_obj.GetComponent<Animator>().SetTrigger("Play selected");
         }
         ui_Handler.Text_fade_out(ui_Handler.Gun_name);
+    }
+
+    private void SaveWeaponTransform()
+    {
+        Guns_originalPosition = new Vector3(0,-0.21f,-0.7f);
+        Guns_originalRotation = new Quaternion(0,1,0,0);
+    }
+
+    private void ResetWeaponTransform()
+    {
+        first_Person_Data.Current_selected_gun_obj.transform.localPosition = Guns_originalPosition;
+        first_Person_Data.Current_selected_gun_obj.transform.localRotation = Guns_originalRotation;
     }
 }

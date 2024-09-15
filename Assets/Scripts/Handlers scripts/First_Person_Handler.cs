@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class First_Person_Handler : MonoBehaviour
@@ -8,6 +9,11 @@ public class First_Person_Handler : MonoBehaviour
 
     [Header("Movement Fields"), HideInInspector]
     public bool Has_dashed = false;
+
+    [Header("Data Members")]
+    public List<GameObject> Guns;
+    [HideInInspector]
+    public GameObject Current_selected_gun_obj;
 
     void Start()
     {
